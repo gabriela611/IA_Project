@@ -62,6 +62,65 @@ if st.session_state["texto_extraido"]:
 else:
     st.info("Aún no se ha extraído texto.")
 
+
+# --------------------------------------------------------
+# MÓDULO 2: Conexión con el Cerebro Lingüístico (GROQ API)
+# --------------------------------------------------------
+st.header("Módulo 2: Conexión con el Cerebro Lingüístico (GROQ API)")
+
+# Selección de modelo y tarea
+modelo_groq = st.selectbox(
+    "Selecciona el modelo de GROQ:",
+    ["llama3-8b-8192", "mixtral-8x7b-32768"]
+)
+
+tarea = st.selectbox(
+    "Selecciona la tarea a realizar sobre el texto:",
+    ["Resumir en 3 puntos clave", "Identificar las entidades principales", "Traducir al inglés"]
+)
+
+# Botón para ejecutar análisis
+if st.button("Analizar texto con GROQ (Módulo 2)"):
+    texto = st.session_state["texto_extraido"].strip()
+
+    if not texto:
+        st.warning("Primero debes extraer texto de una imagen.")
+    else:
+        st.info(f"Procesando con modelo **{modelo_groq}**...")
+
+        # Construir el mensaje para el modelo
+        messages = [
+            {"role": "system", "content": f"Eres un asistente de procesamiento de texto. Tu tarea es: {tarea}."},
+            {"role": "user", "content": f"A continuación tienes el texto a analizar:\n\n{texto}"}
+        ]
+
+        # Crear la solicitud a la API de GROQ
+        payload = {
+            "model": modelo_groq,
+            "messages": messages,
+            "temperature": 0.3,
+            "max_tokens": 512
+        }
+
+        headers = {
+            "Authorization": f"Bearer {groq_key}",
+            "Content-Type": "application/json"
+        }
+
+        endpoint = "https://api.groq.com/openai/v1/chat/completions"
+
+        try:
+            with st.spinner("Obteniendo respuesta del modelo..."):
+                response = requests.post(endpoint, json=payload, headers=headers)
+                response.raise_for_status()
+                data = response.json()
+                contenido = data["choices"][0]["message"]["content"]
+        except Exception as e:
+            st.error(f"Error al conectar con GROQ: {e}")
+        else:
+            st.markdown("### Respuesta del modelo (GROQ):")
+            st.markdown(contenido)
+
 # --------------------------------------------------------
 # MÓDULO 3: Flexibilidad y Experimentación
 # --------------------------------------------------------
