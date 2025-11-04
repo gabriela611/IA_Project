@@ -99,7 +99,7 @@ if st.button("Analizar texto con GROQ (Módulo 2)"):
             "model": modelo_groq,
             "messages": messages,
             "temperature": 0.3,
-            "max_tokens": 512
+            "max_completion_tokens": 512
         }
 
         headers = {
@@ -165,7 +165,7 @@ if st.button("Analizar Texto"):
             "model": modelo_groq,
             "messages": messages,
             "temperature": temperature,
-            "max_tokens": max_tokens
+            "max_completion_tokens": max_tokens
         }
 
         headers = {
