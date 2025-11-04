@@ -1,0 +1,7 @@
+streamlit
+easyocr
+pillow
+numpy
+python-dotenv
+requests
+huggingface_hub
