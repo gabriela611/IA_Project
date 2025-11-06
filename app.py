@@ -188,28 +188,26 @@ if st.button("Analizar Texto"):
             st.markdown(contenido)
 
     elif proveedor == "Hugging Face":
-        st.info(f"Procesando con **Hugging Face**...")
+    # --------------------- HUGGING FACE ---------------------
+        st.info("Procesando con **Hugging Face**...")
         try:
             client = InferenceClient(api_key=hf_key)
             with st.spinner("Conectando con Hugging Face..."):
                 if "Resumir" in tarea:
-                    output = client.summarization(
-                        model="facebook/bart-large-cnn",
-                        inputs=texto
-                    )
+                    # para modelos de resumen
+                    output = client.summarization(texto, model="facebook/bart-large-cnn")
                     resultado = output[0]["summary_text"]
 
                 elif "Traducir" in tarea:
-                    output = client.translation(
-                        model="Helsinki-NLP/opus-mt-es-en",
-                        inputs=texto
-                    )
+                    # para modelos de traducción
+                    output = client.translation(texto, model="Helsinki-NLP/opus-mt-es-en")
                     resultado = output[0]["translation_text"]
 
                 else:
+                    # para tareas de texto libre
                     output = client.text_generation(
+                        f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
                         model="tiiuae/falcon-7b-instruct",
-                        inputs=f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
                         max_new_tokens=max_tokens,
                         temperature=temperature
                     )
