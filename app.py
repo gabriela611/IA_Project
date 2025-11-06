@@ -188,30 +188,38 @@ if st.button("Analizar Texto"):
             st.markdown(contenido)
 
     elif proveedor == "Hugging Face":
-        # --------------------- HUGGING FACE ---------------------
+    # --------------------- HUGGING FACE ---------------------
         st.info(f"Procesando con **Hugging Face** ({modelo_hf})...")
         try:
             client = InferenceClient(token=hf_key)
             with st.spinner("Conectando con Hugging Face..."):
                 if "Resumir" in tarea:
+                    # Tarea de resumen
+                    response = client.summarization(
+                        texto,
+                        model=modelo_hf
+                    )
+                    resultado = response[0]["summary_text"]
+
+                elif "Traducir" in tarea:
+                    # Tarea de traducción
+                    response = client.translation(
+                        texto,
+                        model="Helsinki-NLP/opus-mt-es-en"
+                    )
+                    resultado = response[0]["translation_text"]
+
+                else:
+                    # Identificación de entidades (usamos modelo genérico de texto)
                     response = client.text_generation(
-                        f"Resume el siguiente texto en 3 puntos clave:\n\n{texto}",
-                        model=modelo_hf,
+                        f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
+                        model="tiiuae/falcon-7b-instruct",
                         max_new_tokens=max_tokens,
                         temperature=temperature
                     )
-                elif "Traducir" in tarea:
-                    response = client.text_generation(
-                        f"Traduce al inglés el siguiente texto:\n\n{texto}",
-                        model="Helsinki-NLP/opus-mt-es-en"
-                    )
-                else:
-                    response = client.text_generation(
-                        f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
-                        model=modelo_hf
-                    )
+                    resultado = response
         except Exception as e:
             st.error(f"Error al conectar con Hugging Face: {e}")
         else:
-            st.markdown("### Respuesta del modelo (Hugging Face):")
-            st.markdown(response)
+            st.markdown("### 🤖 Respuesta del modelo (Hugging Face):")
+            st.markdown(resultado)
