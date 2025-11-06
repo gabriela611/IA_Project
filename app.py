@@ -17,12 +17,12 @@ st.write("Aplicación multimodal: OCR + Análisis de texto con GROQ y Hugging Fa
 # --------------------------------------------------------
 # CARGAR CLAVES DESDE .env
 # --------------------------------------------------------
-
-groq_key = st.secrets.get("GROQ_API_KEY")
-hf_key = st.secrets.get("HUGGINGFACE_API_KEY")
+load_dotenv()
+groq_key = os.getenv("GROQ_API_KEY")
+hf_key = os.getenv("HUGGINGFACE_API_KEY")
 
 if not groq_key or not hf_key:
-    st.error("⚠️ No se pudieron cargar las claves desde Streamlit Secrets.")
+    st.error("⚠️ Faltan claves de API. Verifica tu archivo .env.")
     st.stop()
 
 # --------------------------------------------------------
@@ -187,39 +187,35 @@ if st.button("Analizar Texto"):
             st.markdown("### Respuesta del modelo (GROQ):")
             st.markdown(contenido)
 
-    elif proveedor == "Hugging Face":
-    # --------------------- HUGGING FACE ---------------------
-        st.info(f"Procesando con **Hugging Face** ({modelo_hf})...")
-        try:
-            client = InferenceClient(token=hf_key)
-            with st.spinner("Conectando con Hugging Face..."):
-                if "Resumir" in tarea:
-                    # Tarea de resumen
-                    response = client.summarization(
-                        texto,
-                        model=modelo_hf
-                    )
-                    resultado = response[0]["summary_text"]
+elif proveedor == "Hugging Face":
+    st.info(f"Procesando con **Hugging Face**...")
+    try:
+        client = InferenceClient(api_key=hf_key)
+        with st.spinner("Conectando con Hugging Face..."):
+            if "Resumir" in tarea:
+                output = client.summarization(
+                    model="facebook/bart-large-cnn",
+                    inputs=texto
+                )
+                resultado = output[0]["summary_text"]
 
-                elif "Traducir" in tarea:
-                    # Tarea de traducción
-                    response = client.translation(
-                        texto,
-                        model="Helsinki-NLP/opus-mt-es-en"
-                    )
-                    resultado = response[0]["translation_text"]
+            elif "Traducir" in tarea:
+                output = client.translation(
+                    model="Helsinki-NLP/opus-mt-es-en",
+                    inputs=texto
+                )
+                resultado = output[0]["translation_text"]
 
-                else:
-                    # Identificación de entidades (usamos modelo genérico de texto)
-                    response = client.text_generation(
-                        f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
-                        model="tiiuae/falcon-7b-instruct",
-                        max_new_tokens=max_tokens,
-                        temperature=temperature
-                    )
-                    resultado = response
-        except Exception as e:
-            st.error(f"Error al conectar con Hugging Face: {e}")
-        else:
-            st.markdown("### 🤖 Respuesta del modelo (Hugging Face):")
-            st.markdown(resultado)
+            else:
+                output = client.text_generation(
+                    model="tiiuae/falcon-7b-instruct",
+                    inputs=f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
+                    max_new_tokens=max_tokens,
+                    temperature=temperature
+                )
+                resultado = output
+    except Exception as e:
+        st.error(f"❌ Error al conectar con Hugging Face: {e}")
+    else:
+        st.markdown("### 🤖 Respuesta del modelo (Hugging Face):")
+        st.markdown(resultado)
