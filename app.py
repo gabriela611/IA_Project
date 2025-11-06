@@ -74,7 +74,7 @@ st.header("Módulo 2: Conexión con el Cerebro Lingüístico (GROQ API)")
 # Selección de modelo y tarea
 modelo_groq = st.selectbox(
     "Selecciona el modelo de GROQ:",
-    ["llama-3.3-70b-versatile", "llama-3.1-70b-versatile", "mixtral-8x7b-32768-v0.1"]
+    ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
 )
 
 tarea = st.selectbox(
@@ -191,13 +191,18 @@ if st.button("Analizar Texto"):
             st.markdown(contenido)
 
     elif proveedor == "Hugging Face":
+<<<<<<< Updated upstream
         st.info("Procesando con **Hugging Face**...")
+=======
+        # --------------------- HUGGING FACE ---------------------
+>>>>>>> Stashed changes
         try:
             client = InferenceClient(api_key=hf_key)
 
             with st.spinner("Conectando con Hugging Face..."):
                 # Resumen
                 if "Resumir" in tarea:
+<<<<<<< Updated upstream
                     prompt = f"Resume el siguiente texto en 3 puntos clave:\n\n{texto}"
                     response = client.text_generation(
                         model="facebook/bart-large-cnn",
@@ -229,8 +234,45 @@ if st.button("Analizar Texto"):
                     )
                     resultado = response
 
+=======
+                    # Usar modelo de summarization
+                    st.info(f"Procesando con **Hugging Face** (facebook/bart-large-cnn)...")
+                    response = client.summarization(
+                        texto,
+                        model="facebook/bart-large-cnn"
+                    )
+                    # La respuesta es una lista de diccionarios
+                    contenido = response[0]['summary_text'] if isinstance(response, list) else response.summary_text
+                    
+                elif "Traducir" in tarea:
+                    # Usar modelo de traducción
+                    st.info(f"Procesando con **Hugging Face** (Helsinki-NLP/opus-mt-es-en)...")
+                    response = client.translation(
+                        texto,
+                        model="Helsinki-NLP/opus-mt-es-en"
+                    )
+                    # La respuesta es una lista de diccionarios
+                    contenido = response[0]['translation_text'] if isinstance(response, list) else response.translation_text
+                    
+                else:
+                    # Para identificar entidades, usar un modelo de text-generation
+                    st.info(f"Procesando con **Hugging Face** (mistralai/Mistral-7B-Instruct-v0.2)...")
+                    response = client.text_generation(
+                        f"Identifica las entidades principales (personas, lugares, organizaciones) en el siguiente texto:\n\n{texto}",
+                        model="mistralai/Mistral-7B-Instruct-v0.2",
+                        max_new_tokens=max_tokens,
+                        temperature=temperature
+                    )
+                    contenido = response
+                    
+>>>>>>> Stashed changes
         except Exception as e:
             st.error(f"❌ Error al conectar con Hugging Face: {e}")
         else:
+<<<<<<< Updated upstream
             st.markdown("### 🤖 Respuesta del modelo (Hugging Face):")
             st.markdown(resultado)
+=======
+            st.markdown("### Respuesta del modelo (Hugging Face):")
+            st.markdown(contenido)
+>>>>>>> Stashed changes
