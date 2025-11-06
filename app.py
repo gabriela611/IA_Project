@@ -187,35 +187,35 @@ if st.button("Analizar Texto"):
             st.markdown("### Respuesta del modelo (GROQ):")
             st.markdown(contenido)
 
-elif proveedor == "Hugging Face":
-    st.info(f"Procesando con **Hugging Face**...")
-    try:
-        client = InferenceClient(api_key=hf_key)
-        with st.spinner("Conectando con Hugging Face..."):
-            if "Resumir" in tarea:
-                output = client.summarization(
-                    model="facebook/bart-large-cnn",
-                    inputs=texto
-                )
-                resultado = output[0]["summary_text"]
+    elif proveedor == "Hugging Face":
+        st.info(f"Procesando con **Hugging Face**...")
+        try:
+            client = InferenceClient(api_key=hf_key)
+            with st.spinner("Conectando con Hugging Face..."):
+                if "Resumir" in tarea:
+                    output = client.summarization(
+                        model="facebook/bart-large-cnn",
+                        inputs=texto
+                    )
+                    resultado = output[0]["summary_text"]
 
-            elif "Traducir" in tarea:
-                output = client.translation(
-                    model="Helsinki-NLP/opus-mt-es-en",
-                    inputs=texto
-                )
-                resultado = output[0]["translation_text"]
+                elif "Traducir" in tarea:
+                    output = client.translation(
+                        model="Helsinki-NLP/opus-mt-es-en",
+                        inputs=texto
+                    )
+                    resultado = output[0]["translation_text"]
 
-            else:
-                output = client.text_generation(
-                    model="tiiuae/falcon-7b-instruct",
-                    inputs=f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
-                    max_new_tokens=max_tokens,
-                    temperature=temperature
-                )
-                resultado = output
-    except Exception as e:
-        st.error(f"❌ Error al conectar con Hugging Face: {e}")
-    else:
-        st.markdown("### 🤖 Respuesta del modelo (Hugging Face):")
-        st.markdown(resultado)
+                else:
+                    output = client.text_generation(
+                        model="tiiuae/falcon-7b-instruct",
+                        inputs=f"Identifica las entidades principales en el siguiente texto:\n\n{texto}",
+                        max_new_tokens=max_tokens,
+                        temperature=temperature
+                    )
+                    resultado = output
+        except Exception as e:
+            st.error(f"❌ Error al conectar con Hugging Face: {e}")
+        else:
+            st.markdown("### 🤖 Respuesta del modelo (Hugging Face):")
+            st.markdown(resultado)
