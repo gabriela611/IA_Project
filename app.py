@@ -193,32 +193,41 @@ if st.button("Analizar Texto"):
     elif proveedor == "Hugging Face":
         st.info("Procesando con **Hugging Face**...")
         try:
-            # Inicializa el cliente con tu token
             client = InferenceClient(api_key=hf_key)
 
             with st.spinner("Conectando con Hugging Face..."):
-                # Selecciona modelo y construye la solicitud manualmente
+                # Resumen
                 if "Resumir" in tarea:
-                    modelo_hf = "facebook/bart-large-cnn"
-                    payload = {"inputs": texto}
-                    response = client.post(model=modelo_hf, json=payload)
-                    resultado = response[0]["summary_text"]
+                    prompt = f"Resume el siguiente texto en 3 puntos clave:\n\n{texto}"
+                    response = client.text_generation(
+                        model="facebook/bart-large-cnn",
+                        prompt=prompt,
+                        max_new_tokens=max_tokens,
+                        temperature=temperature
+                    )
+                    resultado = response
 
+                # Traducción
                 elif "Traducir" in tarea:
-                    modelo_hf = "Helsinki-NLP/opus-mt-es-en"
-                    payload = {"inputs": texto}
-                    response = client.post(model=modelo_hf, json=payload)
-                    resultado = response[0]["translation_text"]
+                    prompt = f"Traduce al inglés el siguiente texto:\n\n{texto}"
+                    response = client.text_generation(
+                        model="Helsinki-NLP/opus-mt-es-en",
+                        prompt=prompt,
+                        max_new_tokens=max_tokens,
+                        temperature=temperature
+                    )
+                    resultado = response
 
+                # Identificación de entidades
                 else:
-                    modelo_hf = "tiiuae/falcon-7b-instruct"
                     prompt = f"Identifica las entidades principales en el siguiente texto:\n\n{texto}"
-                    payload = {
-                        "inputs": prompt,
-                        "parameters": {"max_new_tokens": max_tokens, "temperature": temperature}
-                    }
-                    response = client.post(model=modelo_hf, json=payload)
-                    resultado = response[0]["generated_text"]
+                    response = client.text_generation(
+                        model="tiiuae/falcon-7b-instruct",
+                        prompt=prompt,
+                        max_new_tokens=max_tokens,
+                        temperature=temperature
+                    )
+                    resultado = response
 
         except Exception as e:
             st.error(f"❌ Error al conectar con Hugging Face: {e}")
