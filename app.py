@@ -25,9 +25,6 @@ if not groq_key or not hf_key:
     st.error("⚠️ Faltan claves de API. Verifica tu archivo .env.")
     st.stop()
 
-st.write("Token de Hugging Face cargado:", bool(hf_key))
-
-
 # --------------------------------------------------------
 # CARGAR EL MODELO OCR SOLO UNA VEZ
 # --------------------------------------------------------
@@ -191,50 +188,11 @@ if st.button("Analizar Texto"):
             st.markdown(contenido)
 
     elif proveedor == "Hugging Face":
-<<<<<<< Updated upstream
-        st.info("Procesando con **Hugging Face**...")
-=======
         # --------------------- HUGGING FACE ---------------------
->>>>>>> Stashed changes
         try:
-            client = InferenceClient(api_key=hf_key)
-
+            client = InferenceClient(token=hf_key)
             with st.spinner("Conectando con Hugging Face..."):
-                # Resumen
                 if "Resumir" in tarea:
-<<<<<<< Updated upstream
-                    prompt = f"Resume el siguiente texto en 3 puntos clave:\n\n{texto}"
-                    response = client.text_generation(
-                        model="facebook/bart-large-cnn",
-                        prompt=prompt,
-                        max_new_tokens=max_tokens,
-                        temperature=temperature
-                    )
-                    resultado = response
-
-                # Traducción
-                elif "Traducir" in tarea:
-                    prompt = f"Traduce al inglés el siguiente texto:\n\n{texto}"
-                    response = client.text_generation(
-                        model="Helsinki-NLP/opus-mt-es-en",
-                        prompt=prompt,
-                        max_new_tokens=max_tokens,
-                        temperature=temperature
-                    )
-                    resultado = response
-
-                # Identificación de entidades
-                else:
-                    prompt = f"Identifica las entidades principales en el siguiente texto:\n\n{texto}"
-                    response = client.text_generation(
-                        model="tiiuae/falcon-7b-instruct",
-                        prompt=prompt,
-                        max_new_tokens=max_tokens,
-                        temperature=temperature
-                    )
-                    resultado = response
-
-=======
                     # Usar modelo de summarization
                     st.info(f"Procesando con **Hugging Face** (facebook/bart-large-cnn)...")
                     response = client.summarization(
@@ -265,14 +223,8 @@ if st.button("Analizar Texto"):
                     )
                     contenido = response
                     
->>>>>>> Stashed changes
         except Exception as e:
-            st.error(f"❌ Error al conectar con Hugging Face: {e}")
+            st.error(f"Error al conectar con Hugging Face: {e}")
         else:
-<<<<<<< Updated upstream
-            st.markdown("### 🤖 Respuesta del modelo (Hugging Face):")
-            st.markdown(resultado)
-=======
             st.markdown("### Respuesta del modelo (Hugging Face):")
             st.markdown(contenido)
->>>>>>> Stashed changes
