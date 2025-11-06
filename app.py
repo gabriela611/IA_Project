@@ -17,12 +17,12 @@ st.write("Aplicación multimodal: OCR + Análisis de texto con GROQ y Hugging Fa
 # --------------------------------------------------------
 # CARGAR CLAVES DESDE .env
 # --------------------------------------------------------
-load_dotenv()
-groq_key = os.getenv("GROQ_API_KEY")
-hf_key = os.getenv("HUGGINGFACE_API_KEY")
+
+groq_key = st.secrets.get("GROQ_API_KEY")
+hf_key = st.secrets.get("HUGGINGFACE_API_KEY")
 
 if not groq_key or not hf_key:
-    st.error("⚠️ Faltan claves de API. Verifica tu archivo .env.")
+    st.error("⚠️ No se pudieron cargar las claves desde Streamlit Secrets.")
     st.stop()
 
 # --------------------------------------------------------
