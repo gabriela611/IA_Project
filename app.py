@@ -71,7 +71,7 @@ st.header("Módulo 2: Conexión con el Cerebro Lingüístico (GROQ API)")
 # Selección de modelo y tarea
 modelo_groq = st.selectbox(
     "Selecciona el modelo de GROQ:",
-    ["llama3-8b-8192", "mixtral-8x7b-32768"]
+    ["llama-3.3-70b-versatile", "llama-3.1-70b-versatile", "mixtral-8x7b-32768-v0.1"]
 )
 
 tarea = st.selectbox(
@@ -99,7 +99,7 @@ if st.button("Analizar texto con GROQ (Módulo 2)"):
             "model": modelo_groq,
             "messages": messages,
             "temperature": 0.3,
-            "max_completion_tokens": 512
+            "max_tokens": 512
         }
 
         headers = {
@@ -134,7 +134,7 @@ temperature = st.slider("Temperature (creatividad):", 0.0, 1.0, 0.3, 0.1)
 max_tokens = st.slider("Máximo de tokens (longitud de respuesta):", 100, 1000, 512, 50)
 
 # Selección de modelo y tarea (comunes)
-modelo_groq = "llama3-8b-8192"
+modelo_groq = "llama-3.3-70b-versatile"
 modelo_hf = "facebook/bart-large-cnn"  # modelo de resumen por defecto
 
 tarea = st.selectbox(
@@ -165,7 +165,7 @@ if st.button("Analizar Texto"):
             "model": modelo_groq,
             "messages": messages,
             "temperature": temperature,
-            "max_completion_tokens": max_tokens
+            "max_tokens": max_tokens
         }
 
         headers = {
