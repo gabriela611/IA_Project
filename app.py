@@ -25,6 +25,9 @@ if not groq_key or not hf_key:
     st.error("⚠️ Faltan claves de API. Verifica tu archivo .env.")
     st.stop()
 
+st.write("Token de Hugging Face cargado:", bool(hf_key))
+
+
 # --------------------------------------------------------
 # CARGAR EL MODELO OCR SOLO UNA VEZ
 # --------------------------------------------------------
