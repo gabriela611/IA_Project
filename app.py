@@ -107,7 +107,7 @@ if st.button("Analizar texto con GROQ (Módulo 2)"):
             "Content-Type": "application/json"
         }
 
-        endpoint = "https://api.groq.com/openai/v1/chat/completions"
+        endpoint = "https://api.groq.com/v1/chat/completions"
 
         try:
             with st.spinner("Obteniendo respuesta del modelo..."):
@@ -173,7 +173,7 @@ if st.button("Analizar Texto"):
             "Content-Type": "application/json"
         }
 
-        endpoint = "https://api.groq.com/openai/v1/chat/completions"
+        endpoint = "https://api.groq.com/v1/chat/completions"
 
         try:
             with st.spinner("Conectando con GROQ..."):
